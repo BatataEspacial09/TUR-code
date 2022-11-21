@@ -1,8 +1,8 @@
 void setup(){
     int s1 = digitalRead(pino do sensor 1); //setar os pins aos sensores de luz e aos controladroes dos motores (pwm)
-    int s2 = digitalRead(pino do sensor 1);
-    int m1; //aquela bagaça la do motor
-    int m2; 
+    int s2 = digitalRead(pino do sensor 2);
+    int m1 = 245; //aquela bagaça la do motor
+    int m2 = 245; 
     int erro, erroa = 0;
     int kp = 4; //constantes para configurar o controlador
     int ki = 2;
@@ -13,16 +13,16 @@ void loop(){
     if (s1 == 1 && s2 == 1){ //ambos os sensores estao na linha
         erro = 0;
     }
-    elif (s1 == 0 and s2 == 1) { //lado do motor 1 esta fora da linha
+    elif (s1 == 0 && s2 == 1) { //lado do motor 1 esta fora da linha
         erro = 1;
     }
-    elif (s1 == 1 and s2 == 0){ //lado do motor 2 esta fora da linha
+    elif (s1 == 1 && s2 == 0){ //lado do motor 2 esta fora da linha
         erro = -1;
     }
     elif (s1 == 0 and s2 == 0){ //deu merda e perdemos a linha, o robo retrocede ate encontrar pelo menos um ponto da linha 
         while (s1 == 0 or s2 == 0){
-            m1 = -75%;
-            m2 = -75%;
+            m1 = -245;
+            m2 = -245;
         }
     }
     P = kp*erro; //controlador PID, Proporcional define a "força" com que o robo vai virar para corrigir a tragetoria
@@ -31,6 +31,8 @@ void loop(){
     PID = P+I+D;
     erroa = erro; //salva o erro anterior para ser usado em D
 
-    m1 = 250 + PID; //se encontra em porcentagens pois nao sei a potencia do motor
-    m2 = 250 - PID;
+    if (m1 + PID <= 255 && m1 + PID >= 100 && m2 - PID <= 255 && m2 - PID >= 100){
+        m1 += PID; //se encontra em porcentagens pois nao sei a potencia do motor
+        m2 -= PID;
+    }
 }
